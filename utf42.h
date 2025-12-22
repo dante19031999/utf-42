@@ -78,8 +78,6 @@
  * This macro generates all standard character-encoded versions of the
  * provided string literal.
  *
- * @param char_t Desired character type (`char`, `wchar_t`, `char8_t`,
- *               `char16_t`, or `char32_t`).
  * @param lit A string literal.
  *
  * @return A `std::basic_string_view<char_t>` referring to the selected literal.
@@ -92,6 +90,10 @@
     U##lit, \
 }
 
+/**
+ * @namespace utf42
+ * @brief Main namespace of the library
+ */
 namespace utf42 {
     /**
      * @brief Type trait that checks whether a type is a supported character type.
