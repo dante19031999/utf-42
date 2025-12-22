@@ -209,7 +209,7 @@ Then, copy the following code into your CMake file to fetch the `utf42` library:
 # Fetch the utf42 library
 FetchContent_Declare(
         utf42
-        GIT_REPOSITORY <NOT YET CREATED>
+        GIT_REPOSITORY https://github.com/dante19031999/utf42
         GIT_TAG master
 )
 FetchContent_MakeAvailable(utf42)

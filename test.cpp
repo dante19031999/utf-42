@@ -2,7 +2,6 @@
  * @file test.cpp
  * @brief Testing tools for this library.
  *
- *
  * @warning Ensure that the appropriate character type is used when
  * instantiating the stream classes. This file requires C++11 or later.
  *
