@@ -19,7 +19,7 @@ Unicode transcoding.
 
 ## Index
 
-## **📚 Index for `utf42` Documentation** 📚
+## **📚 Index**
 
 2. [✨ Features](#-features)
 3. [❓ Motivation](#-motivation)
