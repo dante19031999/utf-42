@@ -57,10 +57,26 @@ inline std::string char8_to_char(const std::basic_string_view<char8_t> &sText) {
 }
 
 /**
+ * @brief First example
+ */
+void example1();
+
+/**
+ * @brief Second example
+ */
+void example2();
+
+/**
  * @brief Main function
  * @return Exit status
  */
 int main() {
+    example1();
+    example2();
+    return 0;
+}
+
+void example1() {
     // Example code
     using char42_t = char32_t;
 
@@ -84,5 +100,26 @@ int main() {
     std::cout << "utf-16:   " << str_16 << std::endl;
     std::cout << "utf-32:   " << str_32 << std::endl;
     std::cout << "utf-42:   " << str_42 << std::endl;
-    return 0;
+}
+
+void example2() {
+    // Example code
+    using char42_t = char32_t;
+
+    // Create all different encoding string views
+    constexpr utf42::poly_enc oText = cons_poly_enc("Hello World \U0001F600!");
+
+    // Re-encode everything to utf-8
+    const std::string str_a(oText.TXT_CHAR);
+    const std::string str_8(char8_to_char(oText.TXT_CHAR_8));
+    const std::string str_16(utf8::utf16to8(oText.TXT_CHAR_16));
+    const std::string str_32(utf8::utf32to8(oText.TXT_CHAR_32));
+    const std::string str_42(utf8::utf32to8(oText.visit<char42_t>()));
+
+    // Display everything on the terminal
+    std::cout << "Original: " << str_a << std::endl;
+    std::cout << "utf-8:    " << str_8 << std::endl;
+    std::cout << "utf-16:   " << str_16 << std::endl;
+    std::cout << "utf-32:   " << str_32 << std::endl;
+    std::cout << "utf-42:   " << str_42 << std::endl;
 }

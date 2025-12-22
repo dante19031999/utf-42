@@ -79,7 +79,15 @@ U"hello"
 
 ## 🚀 Usage
 
-**Basic example**
+### **Basic example 1**
+
+Approach: **one time use** string literal.
+
+We use the macro `cons_poly_enc(CharacterType, lit)`
+to process the string literal and reencode on
+compile time to the desired character type.
+This proves particularly usefull when the
+character type is a template parameter.
 
 ```cpp
 #include <utf42/utf42.h>
@@ -98,17 +106,58 @@ constexpr std::basic_string_view<char42_t> strv_42 = make_poly_enc(char42_t, "He
 All variables above refer to the same logical string, encoded differently
 by the compiler.
 
----
+Converting back to UTF-8 (for display)
+
+```cpp
+std::string str_a  (strv_a);
+std::string str_8  (char8_to_char(strv_8));
+std::string str_16 (utf8::utf16to8(strv_16));
+std::string str_32 (utf8::utf32to8(strv_32));
+std::string str_42 (utf8::utf32to8(strv_42));
+```
+
+⚠️ Conversion helpers such as utf8::utf16to8 come from external libraries
+(utf8cpp, `#include <utf8cpp/utf8.h>`) and are not part of utf42.
+
+See [utfcpp documentation](https://github.com/nemtrif/utfcpp) for more information.
+
+### **Basic example 2**
+
+Approach: **multiple time use** string literal.
+
+We use an instance of `utf42::poly_enc` to store all
+variants and recover later the desired variant.
+The macro `cons_poly_enc(lit)` constructs the object
+from a single string literal.
+
+```cpp
+#include <utf42/utf42.h>
+
+// Typedef of char32_t
+using char42_t = char32_t;
+
+// Create all different encoding string views
+constexpr utf42::poly_enc oText = cons_poly_enc("Hello World \U0001F600!");
+```
+
+The variable above refer to the same logical string, encoded differently
+by the compiler.
 
 Converting back to UTF-8 (for display)
 
 ```cpp
-const std::string str_a  (strv_a);
-const std::string str_8  (char8_to_char(strv_8));
-const std::string str_16 (utf8::utf16to8(strv_16));
-const std::string str_32 (utf8::utf32to8(strv_32));
-const std::string str_42 (utf8::utf32to8(strv_42));
+// Re-encode everything to utf-8
+std::string str_a(oText.TXT_CHAR);
+std::string str_8(char8_to_char(oText.TXT_CHAR_8));
+std::string str_16(utf8::utf16to8(oText.TXT_CHAR_16));
+std::string str_32(utf8::utf32to8(oText.TXT_CHAR_32));
+std::string str_42(utf8::utf32to8(oText.visit<char42_t>()));
 ```
+
+It is possible to use the function template `template<CharType char_t>
+constexpr std::basic_string_view<char_t>
+utf42::poly_enc::visit() const noexcept`
+to recover the data in template scenarios.
 
 ⚠️ Conversion helpers such as utf8::utf16to8 come from external libraries
 (utf8cpp, `#include <utf8cpp/utf8.h>`) and are not part of utf42.

@@ -72,6 +72,26 @@
     } \
 )
 
+/**
+ * @brief Constructs a compile-time polymorphic encoded string literal view.
+ *
+ * This macro generates all standard character-encoded versions of the
+ * provided string literal.
+ *
+ * @param char_t Desired character type (`char`, `wchar_t`, `char8_t`,
+ *               `char16_t`, or `char32_t`).
+ * @param lit A string literal.
+ *
+ * @return A `std::basic_string_view<char_t>` referring to the selected literal.
+ */
+#define cons_poly_enc(lit) utf42::poly_enc{ \
+    lit, \
+    L##lit, \
+    u8##lit, \
+    u##lit, \
+    U##lit, \
+}
+
 namespace utf42 {
     /**
      * @brief Type trait that checks whether a type is a supported character type.
