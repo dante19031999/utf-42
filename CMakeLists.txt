@@ -24,7 +24,7 @@ add_library(utf42::utf42 ALIAS utf42)
 # ------------------------------------------------------------
 # Optional utf8cpp (examples/tests only)
 # ------------------------------------------------------------
-option(UTF42_WITH_UTFCPP "Build examples/tests with utf8cpp" ON)
+option(UTF42_WITH_UTFCPP "Build examples/tests with utf8cpp" OFF)
 message(STATUS ${UTF42_WITH_UTFCPP})
 
 if (UTF42_WITH_UTFCPP)
