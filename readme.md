@@ -1,6 +1,6 @@
 ![Compile-time polymorphic string literals in C++20](./resources/presentation.png)
 
-# utf42
+# 🌐 utf42
 
 **Compile-time polymorphic string literals for modern C++**
 
@@ -21,14 +21,14 @@ Unicode transcoding.
 
 ## **📚 Index for `utf42` Documentation** 📚
 
-2. [Features](#-features)
-3. [Motivation](#-motivation)
-4. [Requirements](#-requirements)
-5. [Usage](#-usage)
-7. [Important Limitations](#-important-limitations)
-8. [Design Philosophy](#-design-philosophy)
-9. [Inclusion in Your Project](#-inclusion-in-your-project)
-10. [License](#-license)
+2. [✨ Features](#-features)
+3. [❓ Motivation](#-motivation)
+4. [📦 Requirements](#-requirements)
+5. [🚀 Usage](#-usage)
+7. [⚠️ Important Limitations](#-important-limitations)
+8. [🧠 Design Philosophy](#-design-philosophy)
+9. [🔗 Inclusion in Your Project](#-inclusion-in-your-project)
+10. [📄 License](#-license)
 
 ---
 
@@ -166,7 +166,7 @@ See [utfcpp documentation](https://github.com/nemtrif/utfcpp) for more informati
 
 ---
 
-**Output**
+### **Output**
 
 ```cpp
 std::cout << "Original: " << str_a  << '\n';
@@ -237,7 +237,7 @@ Ideal use cases include:
 
 ---
 
-## **📦 Inclusion in your project**
+## **🔗 Inclusion in your project**
 
 This section explains how to include this library in your project.
 
