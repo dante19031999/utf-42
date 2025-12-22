@@ -21,14 +21,14 @@ Unicode transcoding.
 
 ## **📚 Index**
 
-2. [✨ Features](#-features)
-3. [❓ Motivation](#-motivation)
-4. [📦 Requirements](#-requirements)
-5. [🚀 Usage](#-usage)
-7. [⚠️ Important Limitations](#-important-limitations)
-8. [🧠 Design Philosophy](#-design-philosophy)
-9. [🔗 Inclusion in Your Project](#-inclusion-in-your-project)
-10. [📄 License](#-license)
+1. [✨ Features](#-features)
+2. [❓ Motivation](#-motivation)
+3. [📦 Requirements](#-requirements)
+4. [🚀 Usage](#-usage)
+5. [⚠️ Important Limitations](#-important-limitations)
+6. [🧠 Design Philosophy](#-design-philosophy)
+7. [🔗 Inclusion in Your Project](#-inclusion-in-your-project)
+8. [📄 License](#-license)
 
 ---
 
