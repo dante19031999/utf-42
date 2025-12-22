@@ -1,0 +1,17 @@
+PROJECT_NAME           = "utf-42"
+PROJECT_ICON           = @PROJECT_DIR@/resources/utf42.svg
+PROJECT_LOGO           = @PROJECT_DIR@/resources/utf42.svg
+OUTPUT_DIRECTORY       = @PROJECT_DIR@/docs
+INPUT                  = @PROJECT_DIR@/utf42.h @PROJECT_DIR@/mainpage.dox
+IMAGE_PATH             = @PROJECT_DIR@/resources
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+MARKDOWN_SUPPORT       = YES
+
+# Doxygen Awesome
+GENERATE_TREEVIEW      = YES # required!
+DISABLE_INDEX          = NO
+FULL_SIDEBAR           = NO
+HTML_EXTRA_STYLESHEET  = @AWESOME_CSS_DIR@/doxygen-awesome.css
+HTML_COLORSTYLE        = LIGHT
+
