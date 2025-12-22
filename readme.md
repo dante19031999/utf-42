@@ -83,7 +83,7 @@ U"hello"
 
 Approach: **one time use** string literal.
 
-We use the macro `cons_poly_enc(CharacterType, lit)`
+We use the macro `make_poly_enc(CharacterType, lit)`
 to process the string literal and reencode on
 compile time to the desired character type.
 This proves particularly usefull when the
