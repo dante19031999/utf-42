@@ -1,3 +1,5 @@
+![Compile-time polymorphic string literals in C++20](./resources/presentation.png)
+
 # utf42
 
 **Compile-time polymorphic string literals for modern C++**
