@@ -45,7 +45,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#pragma once
+#ifndef LIB_UTF_42
+#define LIB_UTF_42
 
 #include <string_view>
 #include <type_traits>
@@ -228,3 +229,5 @@ namespace utf42 {
         return oPolyEnv.visit<char_t>();
     }
 } // namespace utf42
+
+#endif //LIB_UTF_42
