@@ -29,13 +29,13 @@
  * SOFTWARE.
  */
 
-#include <cassert>
 #include <iostream>
 #include <string>
 #include <utf8cpp/utf8.h>
 
 #include "utf42.h"
 
+#if __cplusplus >= 202002L
 /**
  * @brief Converts a UTF-8 encoded `std::basic_string_view<char8_t>` to a `std::string`.
  *
@@ -56,6 +56,7 @@ inline std::string char8_to_char(const std::basic_string_view<char8_t> &sText) {
     }
     return sResult;
 }
+#endif
 
 /**
  * @brief Custom assert that displays the strings
@@ -74,16 +75,22 @@ void custom_assert(const std::string &s1, const std::string &s2) {
  */
 void test_simple() {
     constexpr std::basic_string_view<char> strv_a = make_poly_enc(char, "Hello World \U0001F600!");
+#if __cplusplus >= 202002L
     constexpr std::basic_string_view<char8_t> strv_8 = make_poly_enc(char8_t, "Hello World \U0001F600!");
+#endif
     constexpr std::basic_string_view<char16_t> strv_16 = make_poly_enc(char16_t, "Hello World \U0001F600!");
     constexpr std::basic_string_view<char32_t> strv_32 = make_poly_enc(char32_t, "Hello World \U0001F600!");
 
     const std::string str_a(strv_a);
+#if __cplusplus >= 202002L
     const std::string str_8(char8_to_char(strv_8));
+#endif
     const std::string str_16(utf8::utf16to8(strv_16));
     const std::string str_32(utf8::utf32to8(strv_32));
 
+#if __cplusplus >= 202002L
     custom_assert(str_a, str_8);
+#endif
     custom_assert(str_a, str_16);
     custom_assert(str_a, str_32);
 }
@@ -93,21 +100,29 @@ void test_simple() {
  */
 void test_template() {
     using char1_t = char;
+#if __cplusplus >= 202002L
     using char2_t = char8_t;
+#endif
     using char3_t = char16_t;
     using char4_t = char32_t;
 
     constexpr std::basic_string_view<char1_t> strv_a = make_poly_enc(char, "Hello World \U0001F600!");
+#if __cplusplus >= 202002L
     constexpr std::basic_string_view<char2_t> strv_8 = make_poly_enc(char8_t, "Hello World \U0001F600!");
+#endif
     constexpr std::basic_string_view<char3_t> strv_16 = make_poly_enc(char16_t, "Hello World \U0001F600!");
     constexpr std::basic_string_view<char4_t> strv_32 = make_poly_enc(char32_t, "Hello World \U0001F600!");
 
     const std::string str_a(strv_a);
+#if __cplusplus >= 202002L
     const std::string str_8(char8_to_char(strv_8));
+#endif
     const std::string str_16(utf8::utf16to8(strv_16));
     const std::string str_32(utf8::utf32to8(strv_32));
 
+#if __cplusplus >= 202002L
     custom_assert(str_a, str_8);
+#endif
     custom_assert(str_a, str_16);
     custom_assert(str_a, str_32);
 }
