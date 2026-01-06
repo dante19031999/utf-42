@@ -1,4 +1,4 @@
-![Compile-time polymorphic string literals in C++20](./resources/presentation.png)
+![Compile-time polymorphic string literals in C++17/C++20](./resources/presentation.png)
 
 # 🌐 utf42
 
@@ -44,6 +44,7 @@ Unicode transcoding.
 - ✅ Works with custom character typedefs
 - ✅ Header-only
 - ✅ C++20 compliant
+- ✅ C++17 compliant (not all features)
 
 ---
 
@@ -70,12 +71,14 @@ U"hello"
 
 ## 📦 Requirements
 
-- C++20 or later
-    - char8_t
-    - consteval
-    - Concepts
-- UTF-8 encoded source files
-- A compiler with proper Unicode literal support (GCC, Clang, MSVC)
+ - C++17 or later
+     - if constexpr
+ - C++20 or later (if available defines extra features):
+     - char8_t
+     - consteval
+     - Concepts
+ - Recommended UTF-8 encoded source files
+ - A compiler with proper Unicode literal support (GCC, Clang, MSVC)
 
 ---
 
