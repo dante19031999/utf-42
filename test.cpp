@@ -35,6 +35,14 @@
 
 #include "utf42.h"
 
+#if __cplusplus <= 201402L
+namespace std {
+    ///< Non-standard typedef in order to recycle code
+    template<typename char_t>
+    using basic_string_view = utf42::basic_string_view<char_t>;
+}
+#endif
+
 #if __cplusplus >= 202002L
 /**
  * @brief Converts a UTF-8 encoded `std::basic_string_view<char8_t>` to a `std::string`.
@@ -81,12 +89,18 @@ void test_simple() {
     constexpr std::basic_string_view<char16_t> strv_16 = make_poly_enc(char16_t, "Hello World \U0001F600!");
     constexpr std::basic_string_view<char32_t> strv_32 = make_poly_enc(char32_t, "Hello World \U0001F600!");
 
+#if __cplusplus >= 201703L
     const std::string str_a(strv_a);
 #if __cplusplus >= 202002L
     const std::string str_8(char8_to_char(strv_8));
 #endif
     const std::string str_16(utf8::utf16to8(strv_16));
     const std::string str_32(utf8::utf32to8(strv_32));
+#elif   __cplusplus >= 201103L
+    const std::string str_a(strv_a.str());
+    const std::string str_16(utf8::utf16to8(strv_16.str()));
+    const std::string str_32(utf8::utf32to8(strv_32.str()));
+#endif
 
 #if __cplusplus >= 202002L
     custom_assert(str_a, str_8);
@@ -113,12 +127,18 @@ void test_template() {
     constexpr std::basic_string_view<char3_t> strv_16 = make_poly_enc(char16_t, "Hello World \U0001F600!");
     constexpr std::basic_string_view<char4_t> strv_32 = make_poly_enc(char32_t, "Hello World \U0001F600!");
 
+#if __cplusplus >= 201703L
     const std::string str_a(strv_a);
 #if __cplusplus >= 202002L
     const std::string str_8(char8_to_char(strv_8));
 #endif
     const std::string str_16(utf8::utf16to8(strv_16));
     const std::string str_32(utf8::utf32to8(strv_32));
+#elif   __cplusplus >= 201103L
+    const std::string str_a(strv_a.str());
+    const std::string str_16(utf8::utf16to8(strv_16.str()));
+    const std::string str_32(utf8::utf32to8(strv_32.str()));
+#endif
 
 #if __cplusplus >= 202002L
     custom_assert(str_a, str_8);

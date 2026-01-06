@@ -78,6 +78,15 @@ int main() {
     return 0;
 }
 
+#if __cplusplus <= 201402L
+namespace std {
+    ///< Non-standard typedef in order to recycle code
+    template<typename char_t>
+    using basic_string_view = utf42::basic_string_view<char_t>;
+}
+#endif
+
+
 void example1() {
     // Example code
     using char42_t = char32_t;
@@ -91,6 +100,7 @@ void example1() {
     constexpr std::basic_string_view<char32_t> strv_32 = make_poly_enc(char32_t, "Hello World \U0001F600!");
     constexpr std::basic_string_view<char42_t> strv_42 = make_poly_enc(char32_t, "Hello World \U0001F600!");
 
+#if __cplusplus >= 201703L
     // Re-encode everything to utf-8
     const std::string str_a(strv_a);
 #if __cplusplus >= 202002L
@@ -99,7 +109,13 @@ void example1() {
     const std::string str_16(utf8::utf16to8(strv_16));
     const std::string str_32(utf8::utf32to8(strv_32));
     const std::string str_42(utf8::utf32to8(strv_42));
-
+#elif   __cplusplus >= 201103L
+    // Re-encode everything to utf-8
+    const std::string str_a(strv_a.str());
+    const std::string str_16(utf8::utf16to8(strv_16.str()));
+    const std::string str_32(utf8::utf32to8(strv_32.str()));
+    const std::string str_42(utf8::utf32to8(strv_42.str()));
+#endif
     // Display everything on the terminal
     std::cout << "Original: " << str_a << std::endl;
 #if __cplusplus >= 202002L
@@ -117,6 +133,7 @@ void example2() {
     // Create all different encoding string views
     constexpr utf42::poly_enc oText = cons_poly_enc("Hello World \U0001F600!");
 
+#if __cplusplus >= 201703L
     // Re-encode everything to utf-8
     const std::string str_a(oText.TXT_CHAR);
 #if __cplusplus >= 202002L
@@ -125,6 +142,14 @@ void example2() {
     const std::string str_16(utf8::utf16to8(oText.TXT_CHAR_16));
     const std::string str_32(utf8::utf32to8(oText.TXT_CHAR_32));
     const std::string str_42(utf8::utf32to8(oText.visit<char42_t>()));
+#elif   __cplusplus >= 201103L
+    // Re-encode everything to utf-8
+    const std::string str_a(oText.TXT_CHAR.str());
+    const std::string str_16(utf8::utf16to8(oText.TXT_CHAR_16.str()));
+    const std::string str_32(utf8::utf32to8(oText.TXT_CHAR_32.str()));
+    const std::string str_42(utf8::utf32to8(oText.visit<char42_t>().str()));
+#endif
+
 
     // Display everything on the terminal
     std::cout << "Original: " << str_a << std::endl;
