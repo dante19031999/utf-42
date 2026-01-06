@@ -2,6 +2,8 @@
 
 # 🌐 utf42
 
+[![Documentation](https://img.shields.io/badge/docs-website-blue?style=for-the-badge)](https://dante19031999.github.io/utf-42/)
+
 **Compile-time polymorphic string literals for modern C++**
 
 `utf42` is a small, header-only C++ utility that allows you to define a string
