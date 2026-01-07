@@ -1,4 +1,4 @@
-![Compile-time polymorphic string literals in C++17/C++20](./resources/presentation.png)
+![Compile-time polymorphic string literals in Modern C++](./resources/presentation.png)
 
 # 🌐 utf42
 
@@ -45,6 +45,8 @@ Unicode transcoding.
 - ✅ Header-only
 - ✅ C++20 compliant
 - ✅ C++17 compliant (not all features)
+- ✅ C++14 compliant (not all features, uses custom wrapper to replace `std::basic_string_view`)
+- ✅ C++11 compliant (not all features, uses custom wrapper to replace `std::basic_string_view`)
 
 ---
 
@@ -71,14 +73,19 @@ U"hello"
 
 ## 📦 Requirements
 
- - C++17 or later
+- C++11
+    - Uses SFINAE to implement the templates
+    - Some features of the custom string view wrapper can not be made constexpr
+- C++14
+     - Uses SFINAE to implement the templates 
+- C++17 or later
      - if constexpr
- - C++20 or later (if available defines extra features):
+- C++20 or later (if available defines extra features):
      - char8_t
      - consteval
      - Concepts
- - Recommended UTF-8 encoded source files
- - A compiler with proper Unicode literal support (GCC, Clang, MSVC)
+- Recommended UTF-8 encoded source files
+- A compiler with proper Unicode literal support (GCC, Clang, MSVC)
 
 ---
 
