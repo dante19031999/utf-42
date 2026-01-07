@@ -83,10 +83,11 @@
  */
 #define cons_poly_enc(lit)
 
-#if __cplusplus >= 202002L
-
+// Undef the macros for real implementation
 #undef make_poly_enc
 #undef cons_poly_enc
+
+#if __cplusplus >= 202002L
 
 #define make_poly_enc(char_t, lit) utf42::visit_poly_enc<char_t>( \
     utf42::poly_enc{ \
@@ -106,10 +107,7 @@
     U##lit, \
 }
 
-#else
-
-#undef make_poly_enc
-#undef cons_poly_enc
+#elif  __cplusplus <= 201703L && __cplusplus >= 201103L
 
 #define make_poly_enc(char_t, lit) utf42::visit_poly_enc<char_t>( \
     utf42::poly_enc{ \
@@ -366,16 +364,16 @@ namespace utf42 {
 #elif   __cplusplus == 201402L
 
     /**
- * @brief A class that provides a lightweight, non-owning view of a string.
- *
- * This class allows for efficient string manipulation without ownership,
- * making it particularly useful for passing around substring references
- * or interfacing with C-style strings. It avoids unnecessary data copies
- * and allocations, enhancing performance in string handling operations.
- *
- * @tparam char_t The character type (e.g., char, wchar_t) that the view will operate on.
- * @note Only available on C++14 and C++11
- */
+     * @brief A class that provides a lightweight, non-owning view of a string.
+     *
+     * This class allows for efficient string manipulation without ownership,
+     * making it particularly useful for passing around substring references
+     * or interfacing with C-style strings. It avoids unnecessary data copies
+     * and allocations, enhancing performance in string handling operations.
+     *
+     * @tparam char_t The character type (e.g., char, wchar_t) that the view will operate on.
+     * @note Only available on C++14 and C++11
+     */
     template<typename char_t>
     class basic_string_view {
     public:
@@ -582,17 +580,17 @@ namespace utf42 {
     };
 
     /**
-    * @brief Selects the appropriate encoded string view for a given character type.
-    *
-    * This function is evaluated at compile time and returns a
-    * `std::basic_string_view<char_t>` referring to the correctly
-    * encoded literal stored in the provided `poly_enc`.
-    *
-    * @tparam char_t Desired character type.
-    * @param oPolyEnv Polymorphic encoding container.
-    *
-    * @return A string view of the requested character type.
-    */
+     * @brief Selects the appropriate encoded string view for a given character type.
+     *
+     * This function is evaluated at compile time and returns a
+     * `std::basic_string_view<char_t>` referring to the correctly
+     * encoded literal stored in the provided `poly_enc`.
+     *
+     * @tparam char_t Desired character type.
+     * @param oPolyEnv Polymorphic encoding container.
+     *
+     * @return A string view of the requested character type.
+     */
     template<typename char_t>
     constexpr basic_string_view<char_t>
     visit_poly_enc(const poly_enc &oPolyEnv) {
@@ -600,6 +598,138 @@ namespace utf42 {
     }
 
 #elif   __cplusplus == 201103L
+
+    /**
+     * @brief A class that provides a lightweight, non-owning view of a string.
+     *
+     * This class allows for efficient string manipulation without ownership,
+     * making it particularly useful for passing around substring references
+     * or interfacing with C-style strings. It avoids unnecessary data copies
+     * and allocations, enhancing performance in string handling operations.
+     *
+     * @tparam char_t The character type (e.g., char, wchar_t) that the view will operate on.
+     * @note Only available on C++14 and C++11
+     */
+    template<typename char_t>
+    class basic_string_view {
+    public:
+        using pointer = const char_t *; ///< Pointer type to characters.
+        using reference = const char_t &; ///< Reference type to characters.
+        using char_type = char_t; ///< Character type.
+        using size_type = std::size_t; ///< Type for sizes of the string.
+
+        /// Default constructor initializes to an empty string view.
+        constexpr basic_string_view() : m_pData(""), m_nSize(0) {
+        }
+
+        /**
+         * @brief Constructor from a C-style string.
+         *
+         * Initializes the string view with a given null-terminated string
+         * and calculates its length.
+         *
+         * @param pStr Pointer to the null-terminated string.
+         */
+        template<std::size_t N>
+        constexpr basic_string_view(const char_t (&pStr)[N])
+            : m_pData(pStr), m_nSize(N - 1) {
+            static_assert(N > 0, "basic_string_view: invalid length");
+        }
+
+        /// Deleted constructor from nullptr to avoid unintended usage.
+        constexpr basic_string_view(nullptr_t) = delete;
+
+        /**
+         * @brief Get the length of the string.
+         *
+         * @return size_type The length of the string.
+         */
+        constexpr size_type length() const noexcept { return m_nSize; }
+
+        /**
+         * @brief Access the element at the specified index.
+         *
+         * @param pos Index to access.
+         * @return reference The element at the specified index.
+         * @throws std::out_of_range if pos is out of range.
+         */
+        reference operator[](size_type pos) const {
+            if (pos >= m_nSize)
+                throw std::out_of_range("basic_string_view: index out of range");
+            return m_pData[pos];
+        }
+
+        /**
+         * @brief Access the element at the specified index with bounds checking.
+         *
+         * @param pos Index to access.
+         * @return reference The element at the specified index.
+         * @throws std::out_of_range if pos is out of range.
+         */
+        reference at(size_type pos) const {
+            if (pos >= m_nSize)
+                throw std::out_of_range("basic_string_view: index out of range");
+            return m_pData[pos];
+        }
+
+        /**
+         * @brief Get a pointer to the underlying character data.
+         *
+         * @return pointer Pointer to the character data.
+         */
+        constexpr pointer data() const noexcept { return m_pData; }
+
+        /**
+         * @brief Convert to bool for checking if the string view is non-empty.
+         *
+         * @return true if the string view is non-empty, else false.
+         */
+        constexpr explicit operator bool() const noexcept { return m_nSize > 0; }
+
+        /**
+         * @brief Check if the string view is empty.
+         *
+         * @return true if empty, else false.
+         */
+        constexpr bool empty() const noexcept { return m_nSize == 0; }
+
+        /**
+         * @brief Compare two string views for equality.
+         *
+         * @param other The other string view to compare.
+         * @return true if equal, else false.
+         */
+        bool operator==(const basic_string_view &other) const noexcept {
+            if (m_nSize != other.m_nSize) return false;
+            for (size_type i = 0; i < m_nSize; ++i) {
+                if (m_pData[i] != other.m_pData[i]) return false;
+            }
+            return true;
+        }
+
+        /**
+         * @brief Compare two string views for inequality.
+         *
+         * @param other The other string view to compare.
+         * @return true if not equal, else false.
+         */
+        bool operator!=(const basic_string_view &other) const noexcept {
+            return !(*this == other);
+        }
+
+        /**
+         * @brief Convert to std::basic_string for further manipulation.
+         *
+         * @return std::basic_string<char_t> The string representation.
+         */
+        std::basic_string<char_t> str() const {
+            return std::basic_string<char_t>(m_pData, m_nSize);
+        }
+
+    private:
+        pointer m_pData; ///< Pointer to the character data.
+        size_type m_nSize; ///< The size of the string view.
+    };
 
     /**
      * @brief Container holding all character-encoded views of a string literal.
@@ -655,17 +785,17 @@ namespace utf42 {
     };
 
     /**
-    * @brief Selects the appropriate encoded string view for a given character type.
-    *
-    * This function is evaluated at compile time and returns a
-    * `std::basic_string_view<char_t>` referring to the correctly
-    * encoded literal stored in the provided `poly_enc`.
-    *
-    * @tparam char_t Desired character type.
-    * @param oPolyEnv Polymorphic encoding container.
-    *
-    * @return A string view of the requested character type.
-    */
+     * @brief Selects the appropriate encoded string view for a given character type.
+     *
+     * This function is evaluated at compile time and returns a
+     * `std::basic_string_view<char_t>` referring to the correctly
+     * encoded literal stored in the provided `poly_enc`.
+     *
+     * @tparam char_t Desired character type.
+     * @param oPolyEnv Polymorphic encoding container.
+     *
+     * @return A string view of the requested character type.
+     */
     template<typename char_t>
     constexpr basic_string_view<char_t>
     visit_poly_enc(const poly_enc &oPolyEnv) {
@@ -709,28 +839,6 @@ namespace utf42 {
 
 #endif
 
-#if __cplusplus == 201402L
-
-
-#endif
-
-#if __cplusplus == 201103L
-    template<typename char_t>
-    constexpr bool basic_string_view<char_t>::operator==(const basic_string_view &other) const noexcept {
-        if (m_nSize != other.m_nSize) return false;
-        for (size_type i = 0; i < m_nSize; ++i) {
-            if (m_pData[i] != other.m_pData[i]) return false;
-        }
-        return true;
-    }
-
-    template<typename char_t>
-    constexpr typename basic_string_view<char_t>::size_type basic_string_view<char_t>::str_len(
-        const char_t *pStr) noexcept {
-        if (pStr[0] == '\0') return 0;
-        return str_len(pStr + 1) + 1;
-    }
-#endif
 } // namespace utf42
 
 #endif //LIB_UTF_42
