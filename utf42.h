@@ -359,7 +359,6 @@ namespace utf42 {
 #if __cplusplus >= 202002L
     template<CharacterType char_t>
     constexpr basic_string_view<char_t> poly_enc::visit() const noexcept {
-        static_assert(false, "Unsupported character type");
         return {};
     }
 #else
