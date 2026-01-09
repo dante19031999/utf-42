@@ -132,8 +132,6 @@
  * @brief Main namespace of the library
  */
 namespace utf42 {
-#if __cplusplus >= 202002L
-
     /**
      * @brief Type trait that checks whether a type is a supported character type.
      *
@@ -148,7 +146,7 @@ namespace utf42 {
      * @note Defined only if C++20 is available
      */
     template<typename T>
-    struct is_char : std::bool_constant<
+    struct is_character : std::bool_constant<
                 std::is_same_v<T, char> ||
                 std::is_same_v<T, wchar_t> ||
                 std::is_same_v<T, char8_t> ||
@@ -164,7 +162,9 @@ namespace utf42 {
      * @note Defined only if C++20 is available
      */
     template<typename T>
-    inline constexpr bool is_char_v = is_char<T>::value;
+    inline constexpr bool is_character_v = is_character<T>::value;
+
+#if __cplusplus >= 202002L
 
     /**
      * @brief Concept constraining a type to a supported character type.
@@ -173,7 +173,7 @@ namespace utf42 {
      * @note Defined only if C++20 is available
      */
     template<typename T>
-    concept CharType = is_char_v<T>;
+    concept CharacterType = is_character_v<T>;
 
     /**
      * @brief Concept constraining a type to an integral type.
@@ -244,18 +244,18 @@ namespace utf42 {
          *
          * @return A string view of the requested character type or char_t"".
          */
-        template<CharType char_t>
+        template<CharacterType char_t>
         constexpr std::basic_string_view<char_t>
         visit() const noexcept {
-            if constexpr (std::is_same_v < char_t, char >)
+            if constexpr (std::is_same_v<char_t, char>)
                 return this->TXT_CHAR;
-            else if constexpr (std::is_same_v < char_t, wchar_t >)
+            else if constexpr (std::is_same_v<char_t, wchar_t>)
                 return this->TXT_CHAR_W;
-            else if constexpr (std::is_same_v < char_t, char8_t >)
+            else if constexpr (std::is_same_v<char_t, char8_t>)
                 return this->TXT_CHAR_8;
-            else if constexpr (std::is_same_v < char_t, char16_t >)
+            else if constexpr (std::is_same_v<char_t, char16_t>)
                 return this->TXT_CHAR_16;
-            else if constexpr (std::is_same_v < char_t, char32_t >)
+            else if constexpr (std::is_same_v<char_t, char32_t>)
                 return this->TXT_CHAR_32;
             else
                 return std::basic_string_view<char_t>();
@@ -274,7 +274,7 @@ namespace utf42 {
      *
      * @return A string view of the requested character type.
      */
-    template<CharType char_t>
+    template<CharacterType char_t>
     consteval std::basic_string_view<char_t>
     visit_poly_enc(const poly_enc &oPolyEnv) {
         return oPolyEnv.visit<char_t>();
@@ -345,10 +345,7 @@ namespace utf42 {
                 return std::basic_string_view<char_t>();
 
             // Assert char type
-            static_assert(std::is_same_v<char_t, char> ||
-                          std::is_same_v<char_t, wchar_t> ||
-                          std::is_same_v<char_t, char16_t> ||
-                          std::is_same_v<char_t, char32_t>);
+            static_assert(utf42::is_character_v<char_t>);
         }
     };
 
@@ -847,7 +844,6 @@ namespace utf42 {
     }
 
 #endif
-
 } // namespace utf42
 
 #endif //LIB_UTF_42
