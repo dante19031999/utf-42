@@ -48,13 +48,13 @@
 #ifndef LIB_UTF_42
 #define LIB_UTF_42
 
+#include <type_traits>
+#include <cstddef>
+
 #if   __cplusplus >= 201703L
 #include <string_view>
-#include <type_traits>
-#elif   __cplusplus >= 201103L
+#else
 #include <string>
-#include <cstddef>
-#include <stdexcept>
 #endif
 
 /**
