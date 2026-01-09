@@ -57,6 +57,10 @@
 #include <string>
 #endif
 
+#if __cplusplus < 201103L
+#pragma error "C++ minimum version required is 11"
+#endif
+
 /**
  * @brief Creates a compile-time polymorphic encoded string literal.
  *
