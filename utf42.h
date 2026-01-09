@@ -348,20 +348,7 @@ namespace utf42 {
          */
         template<CharacterType char_t>
         constexpr std::basic_string_view<char_t>
-        visit() const noexcept {
-            if constexpr (std::is_same_v<char_t, char>)
-                return this->TXT_CHAR;
-            else if constexpr (std::is_same_v<char_t, wchar_t>)
-                return this->TXT_CHAR_W;
-            else if constexpr (std::is_same_v<char_t, char8_t>)
-                return this->TXT_CHAR_8;
-            else if constexpr (std::is_same_v<char_t, char16_t>)
-                return this->TXT_CHAR_16;
-            else if constexpr (std::is_same_v<char_t, char32_t>)
-                return this->TXT_CHAR_32;
-            else
-                return std::basic_string_view<char_t>();
-        }
+        visit() const noexcept;
 
 #else
 
@@ -384,14 +371,19 @@ namespace utf42 {
 #endif
     };
 
-#if __cplusplus < 202002L
-
-    // Primary template for unsupported types
+// Primary template for unsupported types
+#if __cplusplus >= 202002L
+    template<CharacterType char_t>
+    constexpr basic_string_view<char_t> poly_enc::visit() const noexcept {
+        return {};
+    }
+#else
     template<typename char_t>
     constexpr basic_string_view<char_t> poly_enc::visit() const noexcept {
         static_assert(false, "Unsupported character type");
-        return {nullptr};
+        return {};
     }
+#endif
 
     // Specialization for char
     template<>
@@ -405,6 +397,14 @@ namespace utf42 {
         return TXT_CHAR_W;
     }
 
+#if __cplusplus >= 202002L
+    // Specialization for char16_t
+    template<>
+    constexpr basic_string_view<char8_t> poly_enc::visit<char8_t>() const noexcept {
+        return TXT_CHAR_8;
+    }
+#endif
+
     // Specialization for char16_t
     template<>
     constexpr basic_string_view<char16_t> poly_enc::visit<char16_t>() const noexcept {
@@ -416,8 +416,6 @@ namespace utf42 {
     constexpr basic_string_view<char32_t> poly_enc::visit<char32_t>() const noexcept {
         return TXT_CHAR_32;
     }
-
-#endif
 
 #if __cplusplus >= 202002L
 
@@ -461,6 +459,7 @@ namespace utf42 {
     }
 
 #endif
+
 } // namespace utf42
 
 #endif //LIB_UTF_42
