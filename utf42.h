@@ -146,11 +146,11 @@ namespace utf42 {
      * @note Defined only if C++20 is available
      */
     template<typename T>
-    struct is_character : std::bool_constant<
+    struct is_character : std::integral_constant<bool,
                 std::is_same<T, char>::value ||
                 std::is_same<T, wchar_t>::value ||
 #if __cplusplus >= 202002L
-                std::is_same<T, char8_t>::value ||
+                std::is_same<T, char8_t>::value||
 #endif
                 std::is_same<T, char16_t>::value ||
                 std::is_same<T, char32_t>::value
