@@ -149,7 +149,9 @@ namespace utf42 {
     struct is_character : std::bool_constant<
                 std::is_same_v<T, char> ||
                 std::is_same_v<T, wchar_t> ||
+#if __cplusplus >= 202002L
                 std::is_same_v<T, char8_t> ||
+#endif
                 std::is_same_v<T, char16_t> ||
                 std::is_same_v<T, char32_t>
             > {
