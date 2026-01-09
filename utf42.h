@@ -157,14 +157,16 @@ namespace utf42 {
             > {
     };
 
+#if __cplusplus >= 201703L
     /**
      * @brief Convenience variable template for `is_char`.
      *
      * @tparam T Type to check.
-     * @note Defined only if C++20 is available
+     * @note Defined only if C++17 is available
      */
     template<typename T>
-    inline constexpr bool is_character_v = is_character<T>::value;
+    constexpr bool is_character_v = is_character<T>::value;
+#endif
 
 #if __cplusplus >= 202002L
 
@@ -194,6 +196,9 @@ namespace utf42 {
      */
     template<typename T>
     concept FloatingPointType = std::is_floating_point_v<T>;
+#endif
+
+#if __cplusplus >= 202002L
 
     /**
      * @brief Container holding all character-encoded views of a string literal.
