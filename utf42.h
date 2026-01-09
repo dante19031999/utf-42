@@ -185,6 +185,15 @@ namespace utf42 {
     concept IntegralType = std::is_integral_v<T>;
 
     /**
+     * @brief Concept constraining a type to an floating point type.
+     *
+     * @tparam T Type to check.
+     * @note Defined only if C++20 is available
+     */
+    template<typename T>
+    concept FloatingPointType = std::is_floating_point_v<T>;
+
+    /**
      * @brief Container holding all character-encoded views of a string literal.
      *
      * Instances of this type are intended to be constructed only from
