@@ -111,7 +111,7 @@
     U##lit, \
 }
 
-#elif  __cplusplus <= 201703L && __cplusplus >= 201103L
+#else
 
 #define make_poly_enc(char_t, lit) utf42::visit_poly_enc<char_t>( \
     utf42::poly_enc{ \
@@ -154,7 +154,7 @@ namespace utf42 {
                 std::is_same<T, char>::value ||
                 std::is_same<T, wchar_t>::value ||
 #if __cplusplus >= 202002L
-                std::is_same<T, char8_t>::value||
+                std::is_same<T, char8_t>::value ||
 #endif
                 std::is_same<T, char16_t>::value ||
                 std::is_same<T, char32_t>::value
