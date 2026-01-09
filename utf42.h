@@ -398,7 +398,7 @@ namespace utf42 {
     }
 
 #if __cplusplus >= 202002L
-    // Specialization for char16_t
+    // Specialization for char8_t
     template<>
     constexpr basic_string_view<char8_t> poly_enc::visit<char8_t>() const noexcept {
         return TXT_CHAR_8;
