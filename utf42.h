@@ -254,15 +254,15 @@ namespace utf42 {
         template<CharacterType char_t>
         constexpr std::basic_string_view<char_t>
         visit() const noexcept {
-            if constexpr (std::is_same_v<char_t, char>)
+            if constexpr (std::is_same_v < char_t, char >)
                 return this->TXT_CHAR;
-            else if constexpr (std::is_same_v<char_t, wchar_t>)
+            else if constexpr (std::is_same_v < char_t, wchar_t >)
                 return this->TXT_CHAR_W;
-            else if constexpr (std::is_same_v<char_t, char8_t>)
+            else if constexpr (std::is_same_v < char_t, char8_t >)
                 return this->TXT_CHAR_8;
-            else if constexpr (std::is_same_v<char_t, char16_t>)
+            else if constexpr (std::is_same_v < char_t, char16_t >)
                 return this->TXT_CHAR_16;
-            else if constexpr (std::is_same_v<char_t, char32_t>)
+            else if constexpr (std::is_same_v < char_t, char32_t >)
                 return this->TXT_CHAR_32;
             else
                 return std::basic_string_view<char_t>();
