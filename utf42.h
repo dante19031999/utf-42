@@ -19,8 +19,8 @@
  * @warning The macro `make_poly_enc` must be used with a string literal.
  *          Passing non-literals results in undefined behavior.
  *
- * @note Requires C++20 or later due to usage of `char8_t`, concepts,
- *       and `consteval`.
+ * @note Requires C++11 or later.
+ * Additional features are available with higher C++ versions.
  *
  * @copyright MIT License
  *
@@ -51,12 +51,14 @@
 #include <type_traits>
 #include <cstddef>
 
+// Use std::basic_string_view if C++17 or custom basic_string_view otherwise
 #if   __cplusplus >= 201703L
 #include <string_view>
 #else
 #include <string>
 #endif
 
+// C++ version requirements
 #if __cplusplus < 201103L
 #pragma error "C++ minimum version required is 11"
 #endif
@@ -73,24 +75,6 @@
  *
  * @return A `std::basic_string_view<char_t>` referring to the selected literal.
  */
-#define make_poly_enc(char_t, lit)
-
-/**
- * @brief Constructs a compile-time polymorphic encoded string literal view.
- *
- * This macro generates all standard character-encoded versions of the
- * provided string literal.
- *
- * @param lit A string literal.
- *
- * @return A `std::basic_string_view<char_t>` referring to the selected literal.
- */
-#define cons_poly_enc(lit)
-
-// Undef the macros for real implementation
-#undef make_poly_enc
-#undef cons_poly_enc
-
 #if __cplusplus >= 202002L
 
 #define make_poly_enc(char_t, lit) utf42::visit_poly_enc<char_t>( \
@@ -103,14 +87,6 @@
     } \
 )
 
-#define cons_poly_enc(lit) utf42::poly_enc{ \
-    lit, \
-    L##lit, \
-    u8##lit, \
-    u##lit, \
-    U##lit, \
-}
-
 #else
 
 #define make_poly_enc(char_t, lit) utf42::visit_poly_enc<char_t>( \
@@ -121,6 +97,30 @@
         U##lit, \
     } \
 )
+
+#endif
+
+/**
+ * @brief Constructs a compile-time polymorphic encoded string literal view.
+ *
+ * This macro generates all standard character-encoded versions of the
+ * provided string literal.
+ *
+ * @param lit A string literal.
+ *
+ * @return A `std::basic_string_view<char_t>` referring to the selected literal.
+ */
+#if __cplusplus >= 202002L
+
+#define cons_poly_enc(lit) utf42::poly_enc{ \
+    lit, \
+    L##lit, \
+    u8##lit, \
+    u##lit, \
+    U##lit, \
+}
+
+#else
 
 #define cons_poly_enc(lit) utf42::poly_enc{ \
     lit, \
@@ -332,49 +332,34 @@ namespace utf42 {
               TXT_CHAR_32(txt_char_32) {
         }
 
+        /**
+         * @brief Selects the appropriate encoded string view for a given character type.
+         *
+         * This function is evaluated at compile time and returns a
+         * `std::basic_string_view<char_t>` referring to the correctly
+         * encoded literal stored in the provided `poly_enc`.
+         * Returns an empty string if the character type is not recognized.
+         *
+         * @tparam char_t Desired character type.
+         *
+         * @return A string view of the requested character type or char_t"".
+         */
 #if __cplusplus >= 202002L
-
-        /**
-         * @brief Selects the appropriate encoded string view for a given character type.
-         *
-         * This function is evaluated at compile time and returns a
-         * `std::basic_string_view<char_t>` referring to the correctly
-         * encoded literal stored in the provided `poly_enc`.
-         * Returns an empty string if the character type is not recognized.
-         *
-         * @tparam char_t Desired character type.
-         *
-         * @return A string view of the requested character type or char_t"".
-         */
         template<CharacterType char_t>
-        constexpr std::basic_string_view<char_t>
+        constexpr basic_string_view<char_t>
         visit() const noexcept;
-
 #else
-
-        /**
-         * @brief Selects the appropriate encoded string view for a given character type.
-         *
-         * This function is evaluated at compile time and returns a
-         * `std::basic_string_view<char_t>` referring to the correctly
-         * encoded literal stored in the provided `poly_enc`.
-         * Returns an empty string if the character type is not recognized.
-         *
-         * @tparam char_t Desired character type.
-         *
-         * @return A string view of the requested character type or char_t"".
-         */
         template<typename char_t>
         constexpr basic_string_view<char_t>
         visit() const noexcept;
-
 #endif
     };
 
-// Primary template for unsupported types
+    // Primary template for unsupported types
 #if __cplusplus >= 202002L
     template<CharacterType char_t>
     constexpr basic_string_view<char_t> poly_enc::visit() const noexcept {
+        static_assert(false, "Unsupported character type");
         return {};
     }
 #else
@@ -417,8 +402,6 @@ namespace utf42 {
         return TXT_CHAR_32;
     }
 
-#if __cplusplus >= 202002L
-
     /**
      * @brief Selects the appropriate encoded string view for a given character type.
      *
@@ -431,35 +414,22 @@ namespace utf42 {
      *
      * @return A string view of the requested character type.
      */
+#if __cplusplus >= 202002L
     template<CharacterType char_t>
     consteval std::basic_string_view<char_t>
     visit_poly_enc(const poly_enc &oPolyEnv) {
         return oPolyEnv.visit<char_t>();
     }
-
 #else
-
-    /**
-     * @brief Selects the appropriate encoded string view for a given character type.
-     *
-     * This function is evaluated at compile time and returns a
-     * `std::basic_string_view<char_t>` referring to the correctly
-     * encoded literal stored in the provided `poly_enc`.
-     *
-     * @tparam char_t Desired character type.
-     * @param oPolyEnv Polymorphic encoding container.
-     *
-     * @return A string view of the requested character type.
-     */
     template<typename char_t>
     constexpr basic_string_view<char_t>
     visit_poly_enc(const poly_enc &oPolyEnv) {
-        static_assert(is_character<char_t>::value, "char_t must be a character");
         return oPolyEnv.visit<char_t>();
     }
-
 #endif
-
 } // namespace utf42
+
+// Clean up helper macro
+#undef LIB_UTF_42_CHAR_TYPE
 
 #endif //LIB_UTF_42
