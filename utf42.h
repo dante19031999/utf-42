@@ -374,7 +374,7 @@ namespace utf42 {
         return oPolyEnv.visit<char_t>();
     }
 
-#elif   __cplusplus == 201402L
+#elif   __cplusplus == 201402L || __cplusplus == 201103L
 
     /**
      * @brief A class that provides a lightweight, non-owning view of a string.
@@ -383,6 +383,10 @@ namespace utf42 {
      * making it particularly useful for passing around substring references
      * or interfacing with C-style strings. It avoids unnecessary data copies
      * and allocations, enhancing performance in string handling operations.
+     *
+     * @warning This class is a very simple class to achieve the purpose of this library.
+     * It does not contain any extra features. You may use your own custom containers to
+     * treat the data. On C++ > 17 the standard std::basic_string_view is used on it's stead.
      *
      * @tparam char_t The character type (e.g., char, wchar_t) that the view will operate on.
      * @note Only available on C++14 and C++11
@@ -397,243 +401,10 @@ namespace utf42 {
 
         /// Default constructor initializes to an empty string view.
         constexpr basic_string_view() : m_pData(""), m_nSize(0) {
-        }
-
-        /**
-         * @brief Constructor from a C-style string.
-         *
-         * Initializes the string view with a given null-terminated string
-         * and calculates its length.
-         *
-         * @param pStr Pointer to the null-terminated string.
-         */
-        constexpr basic_string_view(const char_t *pStr)
-            : m_pData(pStr), m_nSize(str_len(pStr)) {
         }
 
         /// Deleted constructor from nullptr to avoid unintended usage.
         constexpr basic_string_view(nullptr_t) = delete;
-
-        /**
-         * @brief Constructor from a C-style string with specified length.
-         *
-         * Initializes the string view with a pointer to a string and a
-         * specified length. This can be used for substring views or
-         * to interface with string data where the length is known.
-         *
-         * @param pStr Pointer to the string.
-         * @param nLength Length of the string to be viewed.
-         */
-        constexpr basic_string_view(const char_t *pStr, const size_type nLength)
-            : m_pData(pStr), m_nSize(nLength) {
-        }
-
-        /// Deleted constructor from nullptr with specified length to avoid misuse.
-        constexpr basic_string_view(nullptr_t, size_type) = delete;
-
-        /**
-         * @brief Get the length of the string.
-         *
-         * @return size_type The length of the string.
-         */
-        constexpr size_type length() const noexcept { return m_nSize; }
-
-        /**
-         * @brief Access the element at the specified index.
-         *
-         * @param pos Index to access.
-         * @return reference The element at the specified index.
-         * @throws std::out_of_range if pos is out of range.
-         */
-        constexpr reference operator[](size_type pos) const {
-            if (pos >= m_nSize)
-                throw std::out_of_range("basic_string_view: index out of range");
-            return m_pData[pos];
-        }
-
-        /**
-         * @brief Access the element at the specified index with bounds checking.
-         *
-         * @param pos Index to access.
-         * @return reference The element at the specified index.
-         * @throws std::out_of_range if pos is out of range.
-         */
-        constexpr reference at(size_type pos) const {
-            if (pos >= m_nSize)
-                throw std::out_of_range("basic_string_view: index out of range");
-            return m_pData[pos];
-        }
-
-        /**
-         * @brief Get a pointer to the underlying character data.
-         *
-         * @return pointer Pointer to the character data.
-         */
-        constexpr pointer data() const noexcept { return m_pData; }
-
-        /**
-         * @brief Convert to bool for checking if the string view is non-empty.
-         *
-         * @return true if the string view is non-empty, else false.
-         */
-        constexpr explicit operator bool() const noexcept { return m_nSize > 0; }
-
-        /**
-         * @brief Check if the string view is empty.
-         *
-         * @return true if empty, else false.
-         */
-        constexpr bool empty() const noexcept { return m_nSize == 0; }
-
-        /**
-         * @brief Compare two string views for equality.
-         *
-         * @param other The other string view to compare.
-         * @return true if equal, else false.
-         */
-        constexpr bool operator==(const basic_string_view &other) const noexcept {
-            if (m_nSize != other.m_nSize) return false;
-            for (size_type i = 0; i < m_nSize; ++i) {
-                if (m_pData[i] != other.m_pData[i]) return false;
-            }
-            return true;
-        }
-
-        /**
-         * @brief Compare two string views for inequality.
-         *
-         * @param other The other string view to compare.
-         * @return true if not equal, else false.
-         */
-        constexpr bool operator!=(const basic_string_view &other) const noexcept {
-            return !(*this == other);
-        }
-
-        /**
-         * @brief Convert to std::basic_string for further manipulation.
-         *
-         * @return std::basic_string<char_t> The string representation.
-         */
-        std::basic_string<char_t> str() const {
-            return std::basic_string<char_t>(m_pData, m_nSize);
-        }
-
-    private:
-        pointer m_pData; ///< Pointer to the character data.
-        size_type m_nSize; ///< The size of the string view.
-
-        /**
-         * @brief Helper function to calculate the length of a C-style string at compile time.
-         *
-         * This function iterates through the characters until the null terminator is found.
-         *
-         * @param pStr Pointer to the null-terminated string.
-         * @return size_type The length of the string.
-         */
-        static constexpr size_type str_len(const char_t *pStr) noexcept {
-            size_type nLength = 0;
-            while (pStr[nLength] != '\0') {
-                ++nLength;
-            }
-            return nLength;
-        }
-    };
-
-    /**
-     * @brief Container holding all character-encoded views of a string literal.
-     *
-     * Instances of this type are intended to be constructed only from
-     * string literals. Each member corresponds to a distinct literal
-     * encoding generated by the compiler.
-     *
-     * No ownership is taken; all views refer directly to static storage.
-     */
-    struct poly_enc {
-        basic_string_view<char> TXT_CHAR; ///< Narrow character literal
-        basic_string_view<wchar_t> TXT_CHAR_W; ///< Wide character literal
-        basic_string_view<char16_t> TXT_CHAR_16; ///< UTF-16 character literal
-        basic_string_view<char32_t> TXT_CHAR_32; ///< UTF-32 character literal
-
-        /**
-         * @brief Constructs a polymorphic encoding container.
-         *
-         * @param txt_char     Narrow character string view.
-         * @param txt_char_w   Wide character string view.
-         * @param txt_char_8   UTF-8 string view. Only defined if C++20 is available.
-         * @param txt_char_16  UTF-16 string view.
-         * @param txt_char_32  UTF-32 string view.
-         */
-        constexpr poly_enc(
-            const basic_string_view<char> txt_char,
-            const basic_string_view<wchar_t> txt_char_w,
-            const basic_string_view<char16_t> txt_char_16,
-            const basic_string_view<char32_t> txt_char_32
-        ) noexcept
-            : TXT_CHAR(txt_char),
-              TXT_CHAR_W(txt_char_w),
-              TXT_CHAR_16(txt_char_16),
-              TXT_CHAR_32(txt_char_32) {
-        }
-
-        /**
-         * @brief Selects the appropriate encoded string view for a given character type.
-         *
-         * This function is evaluated at compile time and returns a
-         * `std::basic_string_view<char_t>` referring to the correctly
-         * encoded literal stored in the provided `poly_enc`.
-         * Returns an empty string if the character type is not recognized.
-         *
-         * @tparam char_t Desired character type.
-         *
-         * @return A string view of the requested character type or char_t"".
-         */
-        template<typename char_t>
-        constexpr basic_string_view<char_t>
-        visit() const noexcept;
-    };
-
-    /**
-     * @brief Selects the appropriate encoded string view for a given character type.
-     *
-     * This function is evaluated at compile time and returns a
-     * `std::basic_string_view<char_t>` referring to the correctly
-     * encoded literal stored in the provided `poly_enc`.
-     *
-     * @tparam char_t Desired character type.
-     * @param oPolyEnv Polymorphic encoding container.
-     *
-     * @return A string view of the requested character type.
-     */
-    template<typename char_t>
-    constexpr basic_string_view<char_t>
-    visit_poly_enc(const poly_enc &oPolyEnv) {
-        return oPolyEnv.visit<char_t>();
-    }
-
-#elif   __cplusplus == 201103L
-
-    /**
-     * @brief A class that provides a lightweight, non-owning view of a string.
-     *
-     * This class allows for efficient string manipulation without ownership,
-     * making it particularly useful for passing around substring references
-     * or interfacing with C-style strings. It avoids unnecessary data copies
-     * and allocations, enhancing performance in string handling operations.
-     *
-     * @tparam char_t The character type (e.g., char, wchar_t) that the view will operate on.
-     * @note Only available on C++14 and C++11
-     */
-    template<typename char_t>
-    class basic_string_view {
-    public:
-        using pointer = const char_t *; ///< Pointer type to characters.
-        using reference = const char_t &; ///< Reference type to characters.
-        using char_type = char_t; ///< Character type.
-        using size_type = std::size_t; ///< Type for sizes of the string.
-
-        /// Default constructor initializes to an empty string view.
-        constexpr basic_string_view() : m_pData(""), m_nSize(0) {
-        }
 
         /**
          * @brief Constructor from a C-style string.
@@ -649,9 +420,6 @@ namespace utf42 {
             static_assert(N > 0, "basic_string_view: invalid length");
         }
 
-        /// Deleted constructor from nullptr to avoid unintended usage.
-        constexpr basic_string_view(nullptr_t) = delete;
-
         /**
          * @brief Get the length of the string.
          *
@@ -660,75 +428,11 @@ namespace utf42 {
         constexpr size_type length() const noexcept { return m_nSize; }
 
         /**
-         * @brief Access the element at the specified index.
-         *
-         * @param pos Index to access.
-         * @return reference The element at the specified index.
-         * @throws std::out_of_range if pos is out of range.
-         */
-        reference operator[](size_type pos) const {
-            if (pos >= m_nSize)
-                throw std::out_of_range("basic_string_view: index out of range");
-            return m_pData[pos];
-        }
-
-        /**
-         * @brief Access the element at the specified index with bounds checking.
-         *
-         * @param pos Index to access.
-         * @return reference The element at the specified index.
-         * @throws std::out_of_range if pos is out of range.
-         */
-        reference at(size_type pos) const {
-            if (pos >= m_nSize)
-                throw std::out_of_range("basic_string_view: index out of range");
-            return m_pData[pos];
-        }
-
-        /**
          * @brief Get a pointer to the underlying character data.
          *
          * @return pointer Pointer to the character data.
          */
         constexpr pointer data() const noexcept { return m_pData; }
-
-        /**
-         * @brief Convert to bool for checking if the string view is non-empty.
-         *
-         * @return true if the string view is non-empty, else false.
-         */
-        constexpr explicit operator bool() const noexcept { return m_nSize > 0; }
-
-        /**
-         * @brief Check if the string view is empty.
-         *
-         * @return true if empty, else false.
-         */
-        constexpr bool empty() const noexcept { return m_nSize == 0; }
-
-        /**
-         * @brief Compare two string views for equality.
-         *
-         * @param other The other string view to compare.
-         * @return true if equal, else false.
-         */
-        bool operator==(const basic_string_view &other) const noexcept {
-            if (m_nSize != other.m_nSize) return false;
-            for (size_type i = 0; i < m_nSize; ++i) {
-                if (m_pData[i] != other.m_pData[i]) return false;
-            }
-            return true;
-        }
-
-        /**
-         * @brief Compare two string views for inequality.
-         *
-         * @param other The other string view to compare.
-         * @return true if not equal, else false.
-         */
-        bool operator!=(const basic_string_view &other) const noexcept {
-            return !(*this == other);
-        }
 
         /**
          * @brief Convert to std::basic_string for further manipulation.
